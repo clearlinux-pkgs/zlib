@@ -5,7 +5,7 @@
 %define keepstatic 1
 Name     : zlib
 Version  : 1.2.8_jtkv4
-Release  : 24
+Release  : 25
 URL      : https://github.com/jtkukunas/zlib/archive/v1.2.8_jtkv4.tar.gz
 Source0  : https://github.com/jtkukunas/zlib/archive/v1.2.8_jtkv4.tar.gz
 Summary  : zlib compression library
@@ -18,6 +18,7 @@ Patch1: configure.patch
 Patch2: lto.patch
 Patch3: disable-level1.patch
 Patch4: 0001-fix-fizzle-check.patch
+Patch5: 0001-temporarily-workaround-JIRA-801.patch
 
 %description
 ZLIB DATA COMPRESSION LIBRARY
@@ -31,6 +32,7 @@ rfc1952 (gzip format).
 Summary: dev components for the zlib package.
 Group: Development
 Requires: zlib-lib
+Provides: zlib-devel
 
 %description dev
 dev components for the zlib package.
@@ -58,12 +60,13 @@ lib components for the zlib package.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 
 %build
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
-export CFLAGS="$CFLAGS -flto -fno-semantic-interposition -O3 -ffunction-sections "
-export CXXFLAGS="$CXXFLAGS -flto -fno-semantic-interposition -O3 -ffunction-sections "
+export CFLAGS="$CFLAGS -flto -ffunction-sections -fno-semantic-interposition -O3 "
+export CXXFLAGS="$CXXFLAGS -flto -ffunction-sections -fno-semantic-interposition -O3 "
 %configure  --static --shared
 make V=1  %{?_smp_mflags}
 
