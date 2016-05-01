@@ -1,0 +1,1 @@
+cat *.c | ./minigzip | ./minigzip -d > /dev/null

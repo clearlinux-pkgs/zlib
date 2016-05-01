@@ -5,7 +5,7 @@
 %define keepstatic 1
 Name     : zlib
 Version  : 1.2.8_jtkv4
-Release  : 29
+Release  : 30
 URL      : https://github.com/jtkukunas/zlib/archive/v1.2.8_jtkv4.tar.gz
 Source0  : https://github.com/jtkukunas/zlib/archive/v1.2.8_jtkv4.tar.gz
 Summary  : zlib compression library
@@ -65,9 +65,25 @@ lib components for the zlib package.
 %build
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
-export CFLAGS="$CFLAGS -flto -ffunction-sections -fno-semantic-interposition -O3 -falign-functions=32 -falign-loops=32"
-export CXXFLAGS="$CXXFLAGS -flto -ffunction-sections -fno-semantic-interposition -O3 "
-%configure  --static --shared
+export NM=gcc-nm
+export CFLAGS="$CFLAGS -falign-functions=32 -flto -O3 -fno-semantic-interposition "
+export FCFLAGS="$CFLAGS -falign-functions=32 -flto -O3 -fno-semantic-interposition "
+export FFLAGS="$CFLAGS -falign-functions=32 -flto -O3 -fno-semantic-interposition "
+export CXXFLAGS="$CXXFLAGS -falign-functions=32 -flto -O3 -fno-semantic-interposition "
+export CFLAGS_GENERATE="$CFLAGS -fprofile-generate -fprofile-dir=pgo "
+export FCFLAGS_GENERATE="$FCFLAGS -fprofile-generate -fprofile-dir=pgo "
+export FFLAGS_GENERATE="$FFLAGS -fprofile-generate -fprofile-dir=pgo "
+export CXXFLAGS_GENERATE="$CXXFLAGS -fprofile-generate -fprofile-dir=pgo "
+export CFLAGS_USE="$CFLAGS -fprofile-use -fprofile-dir=pgo -fprofile-correction "
+export FCFLAGS_USE="$FCFLAGS -fprofile-use -fprofile-dir=pgo -fprofile-correction "
+export FFLAGS_USE="$FFLAGS -fprofile-use -fprofile-dir=pgo -fprofile-correction "
+export CXXFLAGS_USE="$CXXFLAGS -fprofile-use -fprofile-dir=pgo -fprofile-correction "
+CFLAGS="${CFLAGS_GENERATE}" CXXFLAGS="${CXXFLAGS_GENERATE}" FFLAGS="${FFLAGS_GENERATE}" FCFLAGS="${FCFLAGS_GENERATE}" %configure  --static --shared
+make V=1  %{?_smp_mflags}
+
+cat *.c | ./minigzip | ./minigzip -d > /dev/null
+make clean
+CFLAGS="${CFLAGS_USE}" CXXFLAGS="${CXXFLAGS_USE}" FFLAGS="${FFLAGS_USE}" FCFLAGS="${FCFLAGS_USE}" %configure  --static --shared
 make V=1  %{?_smp_mflags}
 
 %check
