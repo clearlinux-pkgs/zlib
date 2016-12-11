@@ -5,7 +5,7 @@
 %define keepstatic 1
 Name     : zlib
 Version  : 1.2.8_jtkv4
-Release  : 32
+Release  : 33
 URL      : https://github.com/jtkukunas/zlib/archive/v1.2.8_jtkv4.tar.gz
 Source0  : https://github.com/jtkukunas/zlib/archive/v1.2.8_jtkv4.tar.gz
 Summary  : zlib compression library
@@ -14,6 +14,11 @@ License  : BSL-1.0 Zlib
 Requires: zlib-lib
 Requires: zlib-doc
 BuildRequires : cmake
+BuildRequires : gcc-dev32
+BuildRequires : gcc-libgcc32
+BuildRequires : gcc-libstdc++32
+BuildRequires : glibc-dev32
+BuildRequires : glibc-libc32
 Patch1: configure.patch
 Patch2: lto.patch
 Patch3: disable-level1.patch
@@ -38,6 +43,15 @@ Provides: zlib-devel
 dev components for the zlib package.
 
 
+%package dev32
+Summary: dev32 components for the zlib package.
+Group: Default
+Requires: zlib-lib32
+
+%description dev32
+dev32 components for the zlib package.
+
+
 %package doc
 Summary: doc components for the zlib package.
 Group: Documentation
@@ -54,6 +68,14 @@ Group: Libraries
 lib components for the zlib package.
 
 
+%package lib32
+Summary: lib32 components for the zlib package.
+Group: Default
+
+%description lib32
+lib32 components for the zlib package.
+
+
 %prep
 %setup -q -n zlib-1.2.8_jtkv4
 %patch1 -p1
@@ -61,13 +83,19 @@ lib components for the zlib package.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+pushd ..
+cp -a zlib-1.2.8_jtkv4 build32
+popd
 
 %build
 export LANG=C
-export CFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-semantic-interposition "
-export FCFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-semantic-interposition "
-export FFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-semantic-interposition "
-export CXXFLAGS="$CXXFLAGS -O3 -falign-functions=32 -fno-semantic-interposition "
+export AR=gcc-ar
+export RANLIB=gcc-ranlib
+export NM=gcc-nm
+export CFLAGS="$CFLAGS -O3 -falign-functions=32 -flto -fno-semantic-interposition "
+export FCFLAGS="$CFLAGS -O3 -falign-functions=32 -flto -fno-semantic-interposition "
+export FFLAGS="$CFLAGS -O3 -falign-functions=32 -flto -fno-semantic-interposition "
+export CXXFLAGS="$CXXFLAGS -O3 -falign-functions=32 -flto -fno-semantic-interposition "
 export CFLAGS_GENERATE="$CFLAGS -fprofile-generate -fprofile-dir=pgo "
 export FCFLAGS_GENERATE="$FCFLAGS -fprofile-generate -fprofile-dir=pgo "
 export FFLAGS_GENERATE="$FFLAGS -fprofile-generate -fprofile-dir=pgo "
@@ -86,6 +114,12 @@ make clean
 CFLAGS="${CFLAGS_USE}" CXXFLAGS="${CXXFLAGS_USE}" FFLAGS="${FFLAGS_USE}" FCFLAGS="${FCFLAGS_USE}" %configure  --static --shared
 make V=1  %{?_smp_mflags}
 
+pushd ../build32
+export CFLAGS="$CFLAGS -m32"
+export CXXFLAGS="$CXXFLAGS -m32"
+%configure  --static --shared --libdir=/usr/lib32
+make V=1  %{?_smp_mflags}
+popd
 %check
 export LANG=C
 export http_proxy=http://127.0.0.1:9/
@@ -95,10 +129,20 @@ make VERBOSE=1 V=1 %{?_smp_mflags} check
 
 %install
 rm -rf %{buildroot}
+pushd ../build32
+%make_install32
+if [ -d  %{buildroot}/usr/lib32/pkgconfig ]
+then
+pushd %{buildroot}/usr/lib32/pkgconfig
+for i in *.pc ; do mv $i 32$i ; done
+popd
+fi
+popd
 %make_install
 
 %files
 %defattr(-,root,root,-)
+/usr/lib32/libz.a
 
 %files dev
 %defattr(-,root,root,-)
@@ -106,6 +150,11 @@ rm -rf %{buildroot}
 /usr/lib64/*.a
 /usr/lib64/libz.so
 /usr/lib64/pkgconfig/zlib.pc
+
+%files dev32
+%defattr(-,root,root,-)
+/usr/lib32/libz.so
+/usr/lib32/pkgconfig/32zlib.pc
 
 %files doc
 %defattr(-,root,root,-)
@@ -115,3 +164,8 @@ rm -rf %{buildroot}
 %defattr(-,root,root,-)
 /usr/lib64/libz.so.1
 /usr/lib64/libz.so.1.2.8
+
+%files lib32
+%defattr(-,root,root,-)
+/usr/lib32/libz.so.1
+/usr/lib32/libz.so.1.2.8
