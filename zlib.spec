@@ -4,8 +4,8 @@
 #
 %define keepstatic 1
 Name     : zlib
-Version  : 1.2.8_jtkv4
-Release  : 34
+Version  : 1.2.8.jtkv4
+Release  : 35
 URL      : https://github.com/jtkukunas/zlib/archive/v1.2.8_jtkv4.tar.gz
 Source0  : https://github.com/jtkukunas/zlib/archive/v1.2.8_jtkv4.tar.gz
 Summary  : zlib compression library
@@ -47,6 +47,7 @@ dev components for the zlib package.
 Summary: dev32 components for the zlib package.
 Group: Default
 Requires: zlib-lib32
+Requires: zlib-dev
 
 %description dev32
 dev32 components for the zlib package.
@@ -89,13 +90,14 @@ popd
 
 %build
 export LANG=C
+export SOURCE_DATE_EPOCH=1484412447
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
 export NM=gcc-nm
-export CFLAGS="$CFLAGS -O3 -falign-functions=32 -flto -fno-semantic-interposition "
-export FCFLAGS="$CFLAGS -O3 -falign-functions=32 -flto -fno-semantic-interposition "
-export FFLAGS="$CFLAGS -O3 -falign-functions=32 -flto -fno-semantic-interposition "
-export CXXFLAGS="$CXXFLAGS -O3 -falign-functions=32 -flto -fno-semantic-interposition "
+export CFLAGS="$CFLAGS -O3 -falign-functions=32 -ffat-lto-objects -flto -fno-semantic-interposition "
+export FCFLAGS="$CFLAGS -O3 -falign-functions=32 -ffat-lto-objects -flto -fno-semantic-interposition "
+export FFLAGS="$CFLAGS -O3 -falign-functions=32 -ffat-lto-objects -flto -fno-semantic-interposition "
+export CXXFLAGS="$CXXFLAGS -O3 -falign-functions=32 -ffat-lto-objects -flto -fno-semantic-interposition "
 export CFLAGS_GENERATE="$CFLAGS -fprofile-generate -fprofile-dir=pgo "
 export FCFLAGS_GENERATE="$FCFLAGS -fprofile-generate -fprofile-dir=pgo "
 export FFLAGS_GENERATE="$FFLAGS -fprofile-generate -fprofile-dir=pgo "
@@ -115,9 +117,11 @@ CFLAGS="${CFLAGS_USE}" CXXFLAGS="${CXXFLAGS_USE}" FFLAGS="${FFLAGS_USE}" FCFLAGS
 make V=1  %{?_smp_mflags}
 
 pushd ../build32/
+export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
 export CFLAGS="$CFLAGS -m32"
 export CXXFLAGS="$CXXFLAGS -m32"
-%configure  --static --shared --libdir=/usr/lib32 --build=i686-generic-linux-gnu --host=i686-generic-linux-gnu --target=i686-clr-linux-gnu
+export LDFLAGS="$LDFLAGS -m32"
+%configure  --static --shared   --libdir=/usr/lib32 --build=i686-generic-linux-gnu --host=i686-generic-linux-gnu --target=i686-clr-linux-gnu
 make V=1  %{?_smp_mflags}
 popd
 %check
@@ -128,13 +132,14 @@ export no_proxy=localhost
 make VERBOSE=1 V=1 %{?_smp_mflags} check
 
 %install
+export SOURCE_DATE_EPOCH=1484412447
 rm -rf %{buildroot}
 pushd ../build32/
 %make_install32
 if [ -d  %{buildroot}/usr/lib32/pkgconfig ]
 then
 pushd %{buildroot}/usr/lib32/pkgconfig
-for i in *.pc ; do mv $i 32$i ; done
+for i in *.pc ; do ln -s $i 32$i ; done
 popd
 fi
 popd
@@ -155,6 +160,7 @@ popd
 %defattr(-,root,root,-)
 /usr/lib32/libz.so
 /usr/lib32/pkgconfig/32zlib.pc
+/usr/lib32/pkgconfig/zlib.pc
 
 %files doc
 %defattr(-,root,root,-)
