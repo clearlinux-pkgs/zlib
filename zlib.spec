@@ -129,6 +129,7 @@ make V=1  %{?_smp_mflags}
 popd
 
 pushd ../build-avx2/
+export LDFLAGS="$LDFLAGS -m64"
 if [ ! -z "`cat /proc/cpuinfo  | grep bmi2`" ]
 then
 	CFLAGS="${CFLAGS_GENERATE} -march=haswell" CXXFLAGS="${CXXFLAGS_GENERATE}" FFLAGS="${FFLAGS_GENERATE}" FCFLAGS="${FCFLAGS_GENERATE}" %configure  --static --shared --libdir=/usr/lib64/haswell
@@ -191,6 +192,12 @@ popd
 %defattr(-,root,root,-)
 /usr/lib64/libz.so.1
 /usr/lib64/libz.so.1.2.8
+/usr/lib64/haswell/libz.so.1
+/usr/lib64/haswell/libz.so.1.2.8
+%exclude /usr/lib64/haswell/libz.a
+%exclude /usr/lib64/haswell/libz.so
+%exclude /usr/lib64/haswell/pkgconfig/zlib.pc
+
 
 %files lib32
 %defattr(-,root,root,-)
