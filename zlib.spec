@@ -5,7 +5,7 @@
 %define keepstatic 1
 Name     : zlib
 Version  : 1.2.8.jtkv4
-Release  : 38
+Release  : 39
 URL      : https://github.com/jtkukunas/zlib/archive/v1.2.8_jtkv4.tar.gz
 Source0  : https://github.com/jtkukunas/zlib/archive/v1.2.8_jtkv4.tar.gz
 Summary  : zlib compression library
@@ -87,6 +87,9 @@ lib32 components for the zlib package.
 pushd ..
 cp -a zlib-1.2.8_jtkv4 build32
 popd
+pushd ..
+cp -a zlib-1.2.8_jtkv4 build-avx2
+popd
 
 %build
 export LANG=C
@@ -124,6 +127,20 @@ export LDFLAGS="$LDFLAGS -m32"
 %configure  --static --shared   --libdir=/usr/lib32 --build=i686-generic-linux-gnu --host=i686-generic-linux-gnu --target=i686-clr-linux-gnu
 make V=1  %{?_smp_mflags}
 popd
+
+pushd ../build-avx2/
+if [ ! -z "`cat /proc/cpuinfo  | grep bmi2`" ]
+then
+	CFLAGS="${CFLAGS_GENERATE} -march=haswell" CXXFLAGS="${CXXFLAGS_GENERATE}" FFLAGS="${FFLAGS_GENERATE}" FCFLAGS="${FCFLAGS_GENERATE}" %configure  --static --shared --libdir=/usr/lib64/haswell
+	make V=1  %{?_smp_mflags}
+	cat *.c | ./minigzip -6 | ./minigzip -d > /dev/null
+	cat *.c | ./minigzip -4 | ./minigzip -d > /dev/null
+	cat *.c | ./minigzip -9 | ./minigzip -d > /dev/null
+	make clean
+fi
+CFLAGS="${CFLAGS_USE} -march=haswell" CXXFLAGS="${CXXFLAGS_USE}" FFLAGS="${FFLAGS_USE}" FCFLAGS="${FCFLAGS_USE}" %configure  --static --shared --libdir=/usr/lib64/haswell
+make V=1  %{?_smp_mflags}
+popd
 %check
 export LANG=C
 export http_proxy=http://127.0.0.1:9/
@@ -134,6 +151,10 @@ make VERBOSE=1 V=1 %{?_smp_mflags} check
 %install
 export SOURCE_DATE_EPOCH=1486485200
 rm -rf %{buildroot}
+
+pushd ../build-avx2/
+%make_install
+popd
 pushd ../build32/
 %make_install32
 if [ -d  %{buildroot}/usr/lib32/pkgconfig ]
