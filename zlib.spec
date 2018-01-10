@@ -5,7 +5,7 @@
 %define keepstatic 1
 Name     : zlib
 Version  : 1.2.8.jtkv4
-Release  : 40
+Release  : 41
 URL      : https://github.com/jtkukunas/zlib/archive/v1.2.8_jtkv4.tar.gz
 Source0  : https://github.com/jtkukunas/zlib/archive/v1.2.8_jtkv4.tar.gz
 Summary  : zlib compression library
@@ -88,36 +88,39 @@ pushd ..
 cp -a zlib-1.2.8_jtkv4 build32
 popd
 pushd ..
-cp -a zlib-1.2.8_jtkv4 build-avx2
+cp -a zlib-1.2.8_jtkv4 buildavx2
 popd
 
 %build
+export http_proxy=http://127.0.0.1:9/
+export https_proxy=http://127.0.0.1:9/
+export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1486485200
+export SOURCE_DATE_EPOCH=1515625731
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
 export NM=gcc-nm
-export CFLAGS="$CFLAGS -O3 -falign-functions=32 -ffat-lto-objects -flto -fno-semantic-interposition "
-export FCFLAGS="$CFLAGS -O3 -falign-functions=32 -ffat-lto-objects -flto -fno-semantic-interposition "
-export FFLAGS="$CFLAGS -O3 -falign-functions=32 -ffat-lto-objects -flto -fno-semantic-interposition "
-export CXXFLAGS="$CXXFLAGS -O3 -falign-functions=32 -ffat-lto-objects -flto -fno-semantic-interposition "
-export CFLAGS_GENERATE="$CFLAGS -fprofile-generate -fprofile-dir=pgo "
-export FCFLAGS_GENERATE="$FCFLAGS -fprofile-generate -fprofile-dir=pgo "
-export FFLAGS_GENERATE="$FFLAGS -fprofile-generate -fprofile-dir=pgo "
-export CXXFLAGS_GENERATE="$CXXFLAGS -fprofile-generate -fprofile-dir=pgo "
+export CFLAGS="$CFLAGS -O3 -falign-functions=32 -ffat-lto-objects -flto=4 -fno-math-errno -fno-semantic-interposition -fno-trapping-math "
+export FCFLAGS="$CFLAGS -O3 -falign-functions=32 -ffat-lto-objects -flto=4 -fno-math-errno -fno-semantic-interposition -fno-trapping-math "
+export FFLAGS="$CFLAGS -O3 -falign-functions=32 -ffat-lto-objects -flto=4 -fno-math-errno -fno-semantic-interposition -fno-trapping-math "
+export CXXFLAGS="$CXXFLAGS -O3 -falign-functions=32 -ffat-lto-objects -flto=4 -fno-math-errno -fno-semantic-interposition -fno-trapping-math "
+export CFLAGS_GENERATE="$CFLAGS -fprofile-generate -fprofile-dir=pgo -fprofile-update=atomic "
+export FCFLAGS_GENERATE="$FCFLAGS -fprofile-generate -fprofile-dir=pgo -fprofile-update=atomic "
+export FFLAGS_GENERATE="$FFLAGS -fprofile-generate -fprofile-dir=pgo -fprofile-update=atomic "
+export CXXFLAGS_GENERATE="$CXXFLAGS -fprofile-generate -fprofile-dir=pgo -fprofile-update=atomic "
 export CFLAGS_USE="$CFLAGS -fprofile-use -fprofile-dir=pgo -fprofile-correction "
 export FCFLAGS_USE="$FCFLAGS -fprofile-use -fprofile-dir=pgo -fprofile-correction "
 export FFLAGS_USE="$FFLAGS -fprofile-use -fprofile-dir=pgo -fprofile-correction "
 export CXXFLAGS_USE="$CXXFLAGS -fprofile-use -fprofile-dir=pgo -fprofile-correction "
 CFLAGS="${CFLAGS_GENERATE}" CXXFLAGS="${CXXFLAGS_GENERATE}" FFLAGS="${FFLAGS_GENERATE}" FCFLAGS="${FCFLAGS_GENERATE}" %configure  --static --shared
-make V=1  %{?_smp_mflags}
+make  %{?_smp_mflags}
 
 cat *.c | ./minigzip -6 | ./minigzip -d > /dev/null
 cat *.c | ./minigzip -4 | ./minigzip -d > /dev/null
 cat *.c | ./minigzip -9 | ./minigzip -d > /dev/null
 make clean
 CFLAGS="${CFLAGS_USE}" CXXFLAGS="${CXXFLAGS_USE}" FFLAGS="${FFLAGS_USE}" FCFLAGS="${FCFLAGS_USE}" %configure  --static --shared
-make V=1  %{?_smp_mflags}
+make  %{?_smp_mflags}
 
 pushd ../build32/
 export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
@@ -125,37 +128,25 @@ export CFLAGS="$CFLAGS -m32"
 export CXXFLAGS="$CXXFLAGS -m32"
 export LDFLAGS="$LDFLAGS -m32"
 %configure  --static --shared   --libdir=/usr/lib32 --build=i686-generic-linux-gnu --host=i686-generic-linux-gnu --target=i686-clr-linux-gnu
-make V=1  %{?_smp_mflags}
+make  %{?_smp_mflags}
 popd
-
-pushd ../build-avx2/
-export LDFLAGS="$LDFLAGS -m64"
-if [ ! -z "`cat /proc/cpuinfo  | grep bmi2`" ]
-then
-	CFLAGS="${CFLAGS_GENERATE} -march=haswell" CXXFLAGS="${CXXFLAGS_GENERATE}" FFLAGS="${FFLAGS_GENERATE}" FCFLAGS="${FCFLAGS_GENERATE}" %configure  --static --shared --libdir=/usr/lib64/haswell
-	make V=1  %{?_smp_mflags}
-	cat *.c | ./minigzip -6 | ./minigzip -d > /dev/null
-	cat *.c | ./minigzip -4 | ./minigzip -d > /dev/null
-	cat *.c | ./minigzip -9 | ./minigzip -d > /dev/null
-	make clean
-fi
-CFLAGS="${CFLAGS_USE} -march=haswell" CXXFLAGS="${CXXFLAGS_USE}" FFLAGS="${FFLAGS_USE}" FCFLAGS="${FCFLAGS_USE}" %configure  --static --shared --libdir=/usr/lib64/haswell
-make V=1  %{?_smp_mflags}
+pushd ../buildavx2/
+export CFLAGS="$CFLAGS -m64 -march=haswell"
+export CXXFLAGS="$CXXFLAGS -m64 -march=haswell"
+export LDFLAGS="$LDFLAGS -m64 -march=haswell"
+%configure  --static --shared   --libdir=/usr/lib64/haswell --bindir=/usr/bin/haswell
+make  %{?_smp_mflags}
 popd
 %check
 export LANG=C
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
-export no_proxy=localhost
+export no_proxy=localhost,127.0.0.1,0.0.0.0
 make VERBOSE=1 V=1 %{?_smp_mflags} check
 
 %install
-export SOURCE_DATE_EPOCH=1486485200
+export SOURCE_DATE_EPOCH=1515625731
 rm -rf %{buildroot}
-
-pushd ../build-avx2/
-%make_install
-popd
 pushd ../build32/
 %make_install32
 if [ -d  %{buildroot}/usr/lib32/pkgconfig ]
@@ -165,21 +156,27 @@ for i in *.pc ; do ln -s $i 32$i ; done
 popd
 fi
 popd
+pushd ../buildavx2/
+%make_install
+popd
 %make_install
 
 %files
 %defattr(-,root,root,-)
-/usr/lib32/libz.a
+/usr/lib64/haswell/libz.a
+/usr/lib64/haswell/pkgconfig/zlib.pc
 
 %files dev
 %defattr(-,root,root,-)
 /usr/include/*.h
 /usr/lib64/*.a
+/usr/lib64/haswell/libz.so
 /usr/lib64/libz.so
 /usr/lib64/pkgconfig/zlib.pc
 
 %files dev32
 %defattr(-,root,root,-)
+/usr/lib32/*.a
 /usr/lib32/libz.so
 /usr/lib32/pkgconfig/32zlib.pc
 /usr/lib32/pkgconfig/zlib.pc
@@ -190,14 +187,10 @@ popd
 
 %files lib
 %defattr(-,root,root,-)
-/usr/lib64/libz.so.1
-/usr/lib64/libz.so.1.2.8
 /usr/lib64/haswell/libz.so.1
 /usr/lib64/haswell/libz.so.1.2.8
-%exclude /usr/lib64/haswell/libz.a
-%exclude /usr/lib64/haswell/libz.so
-%exclude /usr/lib64/haswell/pkgconfig/zlib.pc
-
+/usr/lib64/libz.so.1
+/usr/lib64/libz.so.1.2.8
 
 %files lib32
 %defattr(-,root,root,-)
