@@ -5,7 +5,7 @@
 %define keepstatic 1
 Name     : zlib
 Version  : 1.2.8.jtkv4
-Release  : 41
+Release  : 42
 URL      : https://github.com/jtkukunas/zlib/archive/v1.2.8_jtkv4.tar.gz
 Source0  : https://github.com/jtkukunas/zlib/archive/v1.2.8_jtkv4.tar.gz
 Summary  : zlib compression library
@@ -96,7 +96,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1515625731
+export SOURCE_DATE_EPOCH=1516826359
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
 export NM=gcc-nm
@@ -145,7 +145,7 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 make VERBOSE=1 V=1 %{?_smp_mflags} check
 
 %install
-export SOURCE_DATE_EPOCH=1515625731
+export SOURCE_DATE_EPOCH=1516826359
 rm -rf %{buildroot}
 pushd ../build32/
 %make_install32
@@ -163,8 +163,8 @@ popd
 
 %files
 %defattr(-,root,root,-)
-/usr/lib64/haswell/libz.a
-/usr/lib64/haswell/pkgconfig/zlib.pc
+%exclude /usr/lib64/haswell/libz.a
+%exclude /usr/lib64/haswell/pkgconfig/zlib.pc
 
 %files dev
 %defattr(-,root,root,-)
