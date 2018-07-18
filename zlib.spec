@@ -4,16 +4,17 @@
 #
 %define keepstatic 1
 Name     : zlib
-Version  : 1.2.8.jtkv4
-Release  : 44
-URL      : https://github.com/jtkukunas/zlib/archive/v1.2.8_jtkv4.tar.gz
-Source0  : https://github.com/jtkukunas/zlib/archive/v1.2.8_jtkv4.tar.gz
+Version  : 1.2.11.1.jtkv6
+Release  : 45
+URL      : https://github.com/jtkukunas/zlib/archive/v1.2.11.1_jtkv6.tar.gz
+Source0  : https://github.com/jtkukunas/zlib/archive/v1.2.11.1_jtkv6.tar.gz
 Summary  : zlib compression library
 Group    : Development/Tools
 License  : BSL-1.0 Zlib
 Requires: zlib-lib
-Requires: zlib-doc
-BuildRequires : cmake
+Requires: zlib-license
+Requires: zlib-man
+BuildRequires : buildreq-cmake
 BuildRequires : gcc-dev32
 BuildRequires : gcc-libgcc32
 BuildRequires : gcc-libstdc++32
@@ -21,13 +22,10 @@ BuildRequires : glibc-dev32
 BuildRequires : glibc-libc32
 Patch1: configure.patch
 Patch2: lto.patch
-Patch3: disable-level1.patch
-Patch4: 0001-fix-fizzle-check.patch
-Patch5: 0001-temporarily-workaround-JIRA-801.patch
 
 %description
 ZLIB DATA COMPRESSION LIBRARY
-zlib 1.2.8 is a general purpose data compression library.  All the code is
+zlib 1.2.11.1 is a general purpose data compression library.  All the code is
 thread safe.  The data format used by the zlib library is described by RFCs
 (Request for Comments) 1950 to 1952 in the files
 http://tools.ietf.org/html/rfc1950 (zlib format), rfc1951 (deflate format) and
@@ -53,17 +51,10 @@ Requires: zlib-dev
 dev32 components for the zlib package.
 
 
-%package doc
-Summary: doc components for the zlib package.
-Group: Documentation
-
-%description doc
-doc components for the zlib package.
-
-
 %package lib
 Summary: lib components for the zlib package.
 Group: Libraries
+Requires: zlib-license
 
 %description lib
 lib components for the zlib package.
@@ -72,23 +63,37 @@ lib components for the zlib package.
 %package lib32
 Summary: lib32 components for the zlib package.
 Group: Default
+Requires: zlib-license
 
 %description lib32
 lib32 components for the zlib package.
 
 
+%package license
+Summary: license components for the zlib package.
+Group: Default
+
+%description license
+license components for the zlib package.
+
+
+%package man
+Summary: man components for the zlib package.
+Group: Default
+
+%description man
+man components for the zlib package.
+
+
 %prep
-%setup -q -n zlib-1.2.8_jtkv4
+%setup -q -n zlib-1.2.11.1_jtkv6
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
 pushd ..
-cp -a zlib-1.2.8_jtkv4 build32
+cp -a zlib-1.2.11.1_jtkv6 build32
 popd
 pushd ..
-cp -a zlib-1.2.8_jtkv4 buildavx2
+cp -a zlib-1.2.11.1_jtkv6 buildavx2
 popd
 
 %build
@@ -96,7 +101,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1516826359
+export SOURCE_DATE_EPOCH=1531927702
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
 export NM=gcc-nm
@@ -130,11 +135,12 @@ export LDFLAGS="$LDFLAGS -m32"
 %configure  --static --shared   --libdir=/usr/lib32 --build=i686-generic-linux-gnu --host=i686-generic-linux-gnu --target=i686-clr-linux-gnu
 make  %{?_smp_mflags}
 popd
+unset PKG_CONFIG_PATH
 pushd ../buildavx2/
 export CFLAGS="$CFLAGS -m64 -march=haswell"
 export CXXFLAGS="$CXXFLAGS -m64 -march=haswell"
 export LDFLAGS="$LDFLAGS -m64 -march=haswell"
-%configure  --static --shared   --libdir=/usr/lib64/haswell --bindir=/usr/bin/haswell
+%configure  --static --shared
 make  %{?_smp_mflags}
 popd
 %check
@@ -145,8 +151,10 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 make VERBOSE=1 V=1 %{?_smp_mflags} check
 
 %install
-export SOURCE_DATE_EPOCH=1516826359
+export SOURCE_DATE_EPOCH=1531927702
 rm -rf %{buildroot}
+mkdir -p %{buildroot}/usr/share/doc/zlib
+cp contrib/dotzlib/LICENSE_1_0.txt %{buildroot}/usr/share/doc/zlib/contrib_dotzlib_LICENSE_1_0.txt
 pushd ../build32/
 %make_install32
 if [ -d  %{buildroot}/usr/lib32/pkgconfig ]
@@ -157,14 +165,12 @@ popd
 fi
 popd
 pushd ../buildavx2/
-%make_install
+%make_install_avx2
 popd
 %make_install
 
 %files
 %defattr(-,root,root,-)
-%exclude /usr/lib64/haswell/libz.a
-%exclude /usr/lib64/haswell/pkgconfig/zlib.pc
 
 %files dev
 %defattr(-,root,root,-)
@@ -181,18 +187,22 @@ popd
 /usr/lib32/pkgconfig/32zlib.pc
 /usr/lib32/pkgconfig/zlib.pc
 
-%files doc
-%defattr(-,root,root,-)
-%doc /usr/share/man/man3/*
-
 %files lib
 %defattr(-,root,root,-)
 /usr/lib64/haswell/libz.so.1
-/usr/lib64/haswell/libz.so.1.2.8
+/usr/lib64/haswell/libz.so.1.2.11.1-motley
 /usr/lib64/libz.so.1
-/usr/lib64/libz.so.1.2.8
+/usr/lib64/libz.so.1.2.11.1-motley
 
 %files lib32
 %defattr(-,root,root,-)
 /usr/lib32/libz.so.1
-/usr/lib32/libz.so.1.2.8
+/usr/lib32/libz.so.1.2.11.1-motley
+
+%files license
+%defattr(-,root,root,-)
+/usr/share/doc/zlib/contrib_dotzlib_LICENSE_1_0.txt
+
+%files man
+%defattr(-,root,root,-)
+/usr/share/man/man3/zlib.3

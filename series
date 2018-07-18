@@ -1,5 +1,2 @@
 configure.patch
 lto.patch
-disable-level1.patch
-0001-fix-fizzle-check.patch
-0001-temporarily-workaround-JIRA-801.patch
