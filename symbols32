@@ -98,6 +98,5 @@ libz.so.1:uncompress
 libz.so.1:uncompress2
 libz.so.1:x86_check_features
 libz.so.1:zError
-libz.so.1:z_errmsg
 libz.so.1:zlibCompileFlags
 libz.so.1:zlibVersion
