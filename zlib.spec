@@ -5,7 +5,7 @@
 %define keepstatic 1
 Name     : zlib
 Version  : 1.2.11.1.jtkv6
-Release  : 46
+Release  : 47
 URL      : https://github.com/jtkukunas/zlib/archive/v1.2.11.1_jtkv6.tar.gz
 Source0  : https://github.com/jtkukunas/zlib/archive/v1.2.11.1_jtkv6.tar.gz
 Summary  : zlib compression library
@@ -22,6 +22,7 @@ BuildRequires : glibc-dev32
 BuildRequires : glibc-libc32
 Patch1: configure.patch
 Patch2: lto.patch
+Patch3: 0003-handle-inflate-w-windowBits-set-to-16.patch
 
 %description
 ZLIB DATA COMPRESSION LIBRARY
@@ -81,6 +82,7 @@ license components for the zlib package.
 %setup -q -n zlib-1.2.11.1_jtkv6
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 pushd ..
 cp -a zlib-1.2.11.1_jtkv6 build32
 popd
@@ -93,7 +95,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1546803481
+export SOURCE_DATE_EPOCH=1549045658
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
 export NM=gcc-nm
@@ -121,10 +123,10 @@ make  %{?_smp_mflags}
 
 pushd ../build32/
 export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
-export ASFLAGS="$ASFLAGS --32"
-export CFLAGS="$CFLAGS -m32"
-export CXXFLAGS="$CXXFLAGS -m32"
-export LDFLAGS="$LDFLAGS -m32"
+export ASFLAGS="${ASFLAGS}${ASFLAGS:+ }--32"
+export CFLAGS="${CFLAGS}${CFLAGS:+ }-m32"
+export CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-m32"
+export LDFLAGS="${LDFLAGS}${LDFLAGS:+ }-m32"
 %configure  --static --shared   --libdir=/usr/lib32 --build=i686-generic-linux-gnu --host=i686-generic-linux-gnu --target=i686-clr-linux-gnu
 make  %{?_smp_mflags}
 popd
@@ -148,7 +150,7 @@ cd ../buildavx2;
 make VERBOSE=1 V=1 %{?_smp_mflags} check || :
 
 %install
-export SOURCE_DATE_EPOCH=1546803481
+export SOURCE_DATE_EPOCH=1549045658
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/zlib
 cp contrib/dotzlib/LICENSE_1_0.txt %{buildroot}/usr/share/package-licenses/zlib/contrib_dotzlib_LICENSE_1_0.txt

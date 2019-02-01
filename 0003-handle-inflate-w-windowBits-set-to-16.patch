@@ -1,0 +1,26 @@
+From 352918dbc327e995d88a7a1094712c976384c89e Mon Sep 17 00:00:00 2001
+From: Jim Kukunas <james.t.kukunas@linux.intel.com>
+Date: Fri, 1 Feb 2019 18:11:03 +0000
+Subject: [PATCH] handle inflate w/ windowBits set to 16
+
+---
+ inflate.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/inflate.c b/inflate.c
+index 52136b7..2269922 100644
+--- a/inflate.c
++++ b/inflate.c
+@@ -239,6 +239,9 @@ int stream_size;
+         return ret;
+     }
+ 
++    if (state->wbits == 0)
++	    state->wbits = 15;
++
+     if (state->wbits > 0) {
+         state->wsize = 1UL << state->wbits;
+         state->window = (unsigned char FAR *)ZALLOC(strm, state->wsize + 16, 4);
+-- 
+2.20.1
+
