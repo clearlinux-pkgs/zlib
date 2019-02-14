@@ -4,7 +4,7 @@
 #
 Name     : zlib
 Version  : 1.2.11.1.jtkv6
-Release  : 49
+Release  : 50
 URL      : https://github.com/jtkukunas/zlib/archive/v1.2.11.1_jtkv6.tar.gz
 Source0  : https://github.com/jtkukunas/zlib/archive/v1.2.11.1_jtkv6.tar.gz
 Summary  : zlib compression library
