@@ -1,3 +1,2 @@
 configure.patch
 lto.patch
-0003-handle-inflate-w-windowBits-set-to-16.patch
