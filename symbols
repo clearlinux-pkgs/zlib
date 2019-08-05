@@ -15,6 +15,7 @@ libz.so.1:adler32
 libz.so.1:adler32_combine
 libz.so.1:adler32_combine64
 libz.so.1:adler32_z
+libz.so.1:bi_windup
 libz.so.1:compress
 libz.so.1:compress2
 libz.so.1:compressBound
@@ -22,6 +23,9 @@ libz.so.1:crc32
 libz.so.1:crc32_combine
 libz.so.1:crc32_combine64
 libz.so.1:crc32_z
+libz.so.1:crc_fold_512to32
+libz.so.1:crc_fold_copy
+libz.so.1:crc_fold_init
 libz.so.1:deflate
 libz.so.1:deflateBound
 libz.so.1:deflateCopy
@@ -38,6 +42,8 @@ libz.so.1:deflateSetDictionary
 libz.so.1:deflateSetHeader
 libz.so.1:deflateTune
 libz.so.1:deflate_medium
+libz.so.1:fill_window
+libz.so.1:flush_pending
 libz.so.1:get_crc_table
 libz.so.1:gzbuffer
 libz.so.1:gzclearerr
