@@ -5,7 +5,7 @@
 %define keepstatic 1
 Name     : zlib
 Version  : 1.2.11.1.jtkv6.3
-Release  : 55
+Release  : 56
 URL      : https://github.com/jtkukunas/zlib/archive/v1.2.11.1_jtkv6.3.tar.gz
 Source0  : https://github.com/jtkukunas/zlib/archive/v1.2.11.1_jtkv6.3.tar.gz
 Summary  : zlib compression library
@@ -36,7 +36,6 @@ Summary: dev components for the zlib package.
 Group: Development
 Requires: zlib-lib = %{version}-%{release}
 Provides: zlib-devel = %{version}-%{release}
-Requires: zlib = %{version}-%{release}
 Requires: zlib = %{version}-%{release}
 
 %description dev
@@ -83,7 +82,6 @@ license components for the zlib package.
 Summary: staticdev components for the zlib package.
 Group: Default
 Requires: zlib-dev = %{version}-%{release}
-Requires: zlib-dev = %{version}-%{release}
 
 %description staticdev
 staticdev components for the zlib package.
@@ -114,7 +112,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1565043043
+export SOURCE_DATE_EPOCH=1568832653
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -144,9 +142,9 @@ make  %{?_smp_mflags}
 pushd ../build32/
 export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
 export ASFLAGS="${ASFLAGS}${ASFLAGS:+ }--32"
-export CFLAGS="${CFLAGS}${CFLAGS:+ }-m32"
-export CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-m32"
-export LDFLAGS="${LDFLAGS}${LDFLAGS:+ }-m32"
+export CFLAGS="${CFLAGS}${CFLAGS:+ }-m32 -mstackrealign"
+export CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-m32 -mstackrealign"
+export LDFLAGS="${LDFLAGS}${LDFLAGS:+ }-m32 -mstackrealign"
 %configure  --static --shared   --libdir=/usr/lib32 --build=i686-generic-linux-gnu --host=i686-generic-linux-gnu --target=i686-clr-linux-gnu
 make  %{?_smp_mflags}
 popd
@@ -170,7 +168,7 @@ cd ../buildavx2;
 make VERBOSE=1 V=1 %{?_smp_mflags} check || :
 
 %install
-export SOURCE_DATE_EPOCH=1565043043
+export SOURCE_DATE_EPOCH=1568832653
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/zlib
 cp contrib/dotzlib/LICENSE_1_0.txt %{buildroot}/usr/share/package-licenses/zlib/contrib_dotzlib_LICENSE_1_0.txt
@@ -196,7 +194,8 @@ rm -f %{buildroot}/usr/lib64/haswell/pkgconfig/zlib.pc
 
 %files dev
 %defattr(-,root,root,-)
-/usr/include/*.h
+/usr/include/zconf.h
+/usr/include/zlib.h
 /usr/lib64/pkgconfig/zlib.pc
 /usr/share/man/man3/zlib.3
 
