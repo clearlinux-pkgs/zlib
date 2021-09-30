@@ -5,7 +5,7 @@
 %define keepstatic 1
 Name     : zlib
 Version  : 1.2.11.1.jtkv6.3
-Release  : 62
+Release  : 63
 URL      : https://github.com/jtkukunas/zlib/archive/v1.2.11.1_jtkv6.3.tar.gz
 Source0  : https://github.com/jtkukunas/zlib/archive/v1.2.11.1_jtkv6.3.tar.gz
 Summary  : zlib compression library
@@ -113,15 +113,15 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1605555447
+export SOURCE_DATE_EPOCH=1633017298
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
 export NM=gcc-nm
-export CFLAGS="$CFLAGS -O3 -falign-functions=32 -ffat-lto-objects -flto=4 -fno-math-errno -fno-semantic-interposition -fno-trapping-math "
-export FCFLAGS="$FFLAGS -O3 -falign-functions=32 -ffat-lto-objects -flto=4 -fno-math-errno -fno-semantic-interposition -fno-trapping-math "
-export FFLAGS="$FFLAGS -O3 -falign-functions=32 -ffat-lto-objects -flto=4 -fno-math-errno -fno-semantic-interposition -fno-trapping-math "
-export CXXFLAGS="$CXXFLAGS -O3 -falign-functions=32 -ffat-lto-objects -flto=4 -fno-math-errno -fno-semantic-interposition -fno-trapping-math "
+export CFLAGS="$CFLAGS -O3 -Ofast -falign-functions=32 -ffat-lto-objects -flto=auto -fno-semantic-interposition -mprefer-vector-width=256 "
+export FCFLAGS="$FFLAGS -O3 -Ofast -falign-functions=32 -ffat-lto-objects -flto=auto -fno-semantic-interposition -mprefer-vector-width=256 "
+export FFLAGS="$FFLAGS -O3 -Ofast -falign-functions=32 -ffat-lto-objects -flto=auto -fno-semantic-interposition -mprefer-vector-width=256 "
+export CXXFLAGS="$CXXFLAGS -O3 -Ofast -falign-functions=32 -ffat-lto-objects -flto=auto -fno-semantic-interposition -mprefer-vector-width=256 "
 export CFLAGS_GENERATE="$CFLAGS -fprofile-generate -fprofile-dir=/var/tmp/pgo -fprofile-update=atomic "
 export FCFLAGS_GENERATE="$FCFLAGS -fprofile-generate -fprofile-dir=/var/tmp/pgo -fprofile-update=atomic "
 export FFLAGS_GENERATE="$FFLAGS -fprofile-generate -fprofile-dir=/var/tmp/pgo -fprofile-update=atomic "
@@ -143,7 +143,7 @@ CFLAGS="${CFLAGS_USE}" CXXFLAGS="${CXXFLAGS_USE}" FFLAGS="${FFLAGS_USE}" FCFLAGS
 make  %{?_smp_mflags}
 
 pushd ../build32/
-export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
+export PKG_CONFIG_PATH="/usr/lib32/pkgconfig:/usr/share/pkgconfig"
 export ASFLAGS="${ASFLAGS}${ASFLAGS:+ }--32"
 export CFLAGS="${CFLAGS}${CFLAGS:+ }-m32 -mstackrealign"
 export CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-m32 -mstackrealign"
@@ -153,11 +153,11 @@ make  %{?_smp_mflags}
 popd
 unset PKG_CONFIG_PATH
 pushd ../buildavx2/
-export CFLAGS="$CFLAGS -m64 -march=haswell"
-export CXXFLAGS="$CXXFLAGS -m64 -march=haswell"
-export FFLAGS="$FFLAGS -m64 -march=haswell"
-export FCFLAGS="$FCFLAGS -m64 -march=haswell"
-export LDFLAGS="$LDFLAGS -m64 -march=haswell"
+export CFLAGS="$CFLAGS -m64 -march=x86-64-v3"
+export CXXFLAGS="$CXXFLAGS -m64 -march=x86-64-v3"
+export FFLAGS="$FFLAGS -m64 -march=x86-64-v3"
+export FCFLAGS="$FCFLAGS -m64 -march=x86-64-v3"
+export LDFLAGS="$LDFLAGS -m64 -march=x86-64-v3"
 %configure  --static --shared
 make  %{?_smp_mflags}
 popd
@@ -173,7 +173,7 @@ cd ../buildavx2;
 make %{?_smp_mflags} check || :
 
 %install
-export SOURCE_DATE_EPOCH=1605555447
+export SOURCE_DATE_EPOCH=1633017298
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/zlib
 cp %{_builddir}/zlib-1.2.11.1_jtkv6.3/contrib/dotzlib/LICENSE_1_0.txt %{buildroot}/usr/share/package-licenses/zlib/892b34f7865d90a6f949f50d95e49625a10bc7f0
@@ -182,6 +182,12 @@ pushd ../build32/
 if [ -d  %{buildroot}/usr/lib32/pkgconfig ]
 then
 pushd %{buildroot}/usr/lib32/pkgconfig
+for i in *.pc ; do ln -s $i 32$i ; done
+popd
+fi
+if [ -d %{buildroot}/usr/share/pkgconfig ]
+then
+pushd %{buildroot}/usr/share/pkgconfig
 for i in *.pc ; do ln -s $i 32$i ; done
 popd
 fi
