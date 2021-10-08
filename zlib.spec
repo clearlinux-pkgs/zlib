@@ -5,12 +5,13 @@
 %define keepstatic 1
 Name     : zlib
 Version  : 1.2.11.1.jtkv6.3
-Release  : 63
+Release  : 64
 URL      : https://github.com/jtkukunas/zlib/archive/v1.2.11.1_jtkv6.3.tar.gz
 Source0  : https://github.com/jtkukunas/zlib/archive/v1.2.11.1_jtkv6.3.tar.gz
 Summary  : zlib compression library
 Group    : Development/Tools
 License  : BSL-1.0 Zlib
+Requires: zlib-filemap = %{version}-%{release}
 Requires: zlib-lib = %{version}-%{release}
 Requires: zlib-license = %{version}-%{release}
 BuildRequires : buildreq-cmake
@@ -52,10 +53,19 @@ Requires: zlib-dev = %{version}-%{release}
 dev32 components for the zlib package.
 
 
+%package filemap
+Summary: filemap components for the zlib package.
+Group: Default
+
+%description filemap
+filemap components for the zlib package.
+
+
 %package lib
 Summary: lib components for the zlib package.
 Group: Libraries
 Requires: zlib-license = %{version}-%{release}
+Requires: zlib-filemap = %{version}-%{release}
 
 %description lib
 lib components for the zlib package.
@@ -113,7 +123,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1633017298
+export SOURCE_DATE_EPOCH=1633708295
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -173,7 +183,7 @@ cd ../buildavx2;
 make %{?_smp_mflags} check || :
 
 %install
-export SOURCE_DATE_EPOCH=1633017298
+export SOURCE_DATE_EPOCH=1633708295
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/zlib
 cp %{_builddir}/zlib-1.2.11.1_jtkv6.3/contrib/dotzlib/LICENSE_1_0.txt %{buildroot}/usr/share/package-licenses/zlib/892b34f7865d90a6f949f50d95e49625a10bc7f0
@@ -193,7 +203,8 @@ popd
 fi
 popd
 pushd ../buildavx2/
-%make_install_avx2
+%make_install_v3
+/usr/bin/elf-move.py avx2 %{buildroot}-v3 %{buildroot}/usr/clear/optimized-elf/ %{buildroot}/usr/clear/filemap/filemap-%{name}
 popd
 %make_install
 ## Remove excluded files
@@ -215,11 +226,13 @@ rm -f %{buildroot}/usr/lib64/haswell/pkgconfig/zlib.pc
 /usr/lib32/pkgconfig/32zlib.pc
 /usr/lib32/pkgconfig/zlib.pc
 
+%files filemap
+%defattr(-,root,root,-)
+/usr/clear/filemap/filemap-zlib
+
 %files lib
 %defattr(-,root,root,-)
-/usr/lib64/haswell/libz.so
-/usr/lib64/haswell/libz.so.1
-/usr/lib64/haswell/libz.so.1.2.11.1-motley
+/usr/clear/optimized-elf/lib*
 /usr/lib64/libz.so
 /usr/lib64/libz.so.1
 /usr/lib64/libz.so.1.2.11.1-motley
