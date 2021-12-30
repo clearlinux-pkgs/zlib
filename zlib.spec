@@ -5,7 +5,7 @@
 %define keepstatic 1
 Name     : zlib
 Version  : 1.2.11.1.jtkv6.3
-Release  : 67
+Release  : 68
 URL      : https://github.com/jtkukunas/zlib/archive/v1.2.11.1_jtkv6.3.tar.gz
 Source0  : https://github.com/jtkukunas/zlib/archive/v1.2.11.1_jtkv6.3.tar.gz
 Summary  : zlib compression library
@@ -123,7 +123,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1634686475
+export SOURCE_DATE_EPOCH=1640887041
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -183,7 +183,7 @@ cd ../buildavx2;
 make %{?_smp_mflags} check || :
 
 %install
-export SOURCE_DATE_EPOCH=1634686475
+export SOURCE_DATE_EPOCH=1640887041
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/zlib
 cp %{_builddir}/zlib-1.2.11.1_jtkv6.3/contrib/dotzlib/LICENSE_1_0.txt %{buildroot}/usr/share/package-licenses/zlib/892b34f7865d90a6f949f50d95e49625a10bc7f0
@@ -209,6 +209,14 @@ popd
 ## Remove excluded files
 rm -f %{buildroot}*/usr/lib64/haswell/libz.a
 rm -f %{buildroot}*/usr/lib64/haswell/pkgconfig/zlib.pc
+## install_append content
+pushd contrib/minizip
+autoreconf -f -i
+%configure
+make
+%make_install
+popd
+## install_append end
 /usr/bin/elf-move.py avx2 %{buildroot}-v3 %{buildroot}/usr/share/clear/optimized-elf/ %{buildroot}/usr/share/clear/filemap/filemap-%{name}
 
 %files
@@ -216,8 +224,14 @@ rm -f %{buildroot}*/usr/lib64/haswell/pkgconfig/zlib.pc
 
 %files dev
 %defattr(-,root,root,-)
+/usr/include/minizip/crypt.h
+/usr/include/minizip/ioapi.h
+/usr/include/minizip/mztools.h
+/usr/include/minizip/unzip.h
+/usr/include/minizip/zip.h
 /usr/include/zconf.h
 /usr/include/zlib.h
+/usr/lib64/pkgconfig/minizip.pc
 /usr/lib64/pkgconfig/zlib.pc
 /usr/share/man/man3/zlib.3
 
@@ -232,6 +246,9 @@ rm -f %{buildroot}*/usr/lib64/haswell/pkgconfig/zlib.pc
 
 %files lib
 %defattr(-,root,root,-)
+/usr/lib64/libminizip.so
+/usr/lib64/libminizip.so.1
+/usr/lib64/libminizip.so.1.0.0
 /usr/lib64/libz.so
 /usr/lib64/libz.so.1
 /usr/lib64/libz.so.1.2.11.1-motley
@@ -249,6 +266,7 @@ rm -f %{buildroot}*/usr/lib64/haswell/pkgconfig/zlib.pc
 
 %files staticdev
 %defattr(-,root,root,-)
+/usr/lib64/libminizip.a
 /usr/lib64/libz.a
 
 %files staticdev32
