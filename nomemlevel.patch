@@ -1,0 +1,29 @@
+From 66a01dac282072a38f1f82667aecbbdb812f9b9f Mon Sep 17 00:00:00 2001
+From: Jim Kukunas <james.t.kukunas@intel.com>
+Date: Mon, 28 Mar 2022 16:17:40 -0400
+Subject: [PATCH] temporary: ignore requests for lower memLevels
+
+temporary workaround for CVE 2018-25032
+
+Will revert once the patch rebasing onto v1.2.12 finishes testing
+---
+ deflate.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/deflate.c b/deflate.c
+index b5e7849..4fea768 100644
+--- a/deflate.c
++++ b/deflate.c
+@@ -237,6 +237,9 @@ int ZEXPORT deflateInit2_(strm, level, method, windowBits, memLevel, strategy,
+     int wrap = 1;
+     static const char my_version[] = ZLIB_VERSION;
+ 
++    if (memLevel < DEF_MEM_LEVEL)
++        memLevel = DEF_MEM_LEVEL;
++
+     ushf *overlay;
+     /* We overlay pending_buf and d_buf+l_buf. This works since the average
+      * output size for (length,distance) codes is <= 24 bits.
+-- 
+2.35.1.windows.2
+

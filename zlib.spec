@@ -23,6 +23,7 @@ BuildRequires : glibc-dev32
 BuildRequires : glibc-libc32
 Patch1: configure.patch
 Patch2: lto.patch
+Patch3: nomemlevel.patch
 
 %description
 ZLIB DATA COMPRESSION LIBRARY
@@ -111,6 +112,7 @@ staticdev32 components for the zlib package.
 cd %{_builddir}/zlib-1.2.11.1_jtkv6.3
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 pushd ..
 cp -a zlib-1.2.11.1_jtkv6.3 build32
 popd
