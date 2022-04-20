@@ -1,3 +1,4 @@
 configure.patch
 lto.patch
 nomemlevel.patch
+backport-fix-CC-definition.patch

@@ -1,6 +1,8 @@
---- zlib-1.2.8/Makefile.in~	2013-04-28 18:57:11.000000000 -0400
-+++ zlib-1.2.8/Makefile.in	2015-04-13 10:54:03.180228619 -0400
-@@ -36,9 +36,9 @@
+diff --git a/Makefile.in b/Makefile.in
+index ee15c6b..9953aea 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -36,9 +36,9 @@ SHAREDLIBV=libz.so.1.2.12
  SHAREDLIBM=libz.so.1
  LIBS=$(STATICLIB) $(SHAREDLIBV)
  
@@ -12,10 +14,12 @@
  LDCONFIG=ldconfig
  LDSHAREDLIBC=-lc
  TAR=tar
---- zlib-1.2.8/configure~	2013-03-24 01:30:09.000000000 -0400
-+++ zlib-1.2.8/configure	2015-04-13 11:16:29.375398864 -0400
-@@ -34,19 +34,19 @@
- VER1=`sed -n -e '/VERSION "/s/.*"\([0-9]*\)\\..*/\1/p' < zlib.h`
+diff --git a/configure b/configure
+index c310bc2..789e21c 100755
+--- a/configure
++++ b/configure
+@@ -46,19 +46,19 @@ VER2=`sed -n -e '/VERSION "/s/.*"\([0-9]*\\.[0-9]*\)\\..*/\1/p' < ${SRCDIR}zlib.
+ VER1=`sed -n -e '/VERSION "/s/.*"\([0-9]*\)\\..*/\1/p' < ${SRCDIR}zlib.h`
  
  # establish commands for library building
 -if "${CROSS_PREFIX}ar" --version >/dev/null 2>/dev/null || test $? -lt 126; then

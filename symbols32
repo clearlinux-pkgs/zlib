@@ -1,6 +1,7 @@
 libz.so.1:ZLIB_1.2.0
 libz.so.1:ZLIB_1.2.0.2
 libz.so.1:ZLIB_1.2.0.8
+libz.so.1:ZLIB_1.2.12
 libz.so.1:ZLIB_1.2.2
 libz.so.1:ZLIB_1.2.2.3
 libz.so.1:ZLIB_1.2.2.4
@@ -22,6 +23,9 @@ libz.so.1:compressBound
 libz.so.1:crc32
 libz.so.1:crc32_combine
 libz.so.1:crc32_combine64
+libz.so.1:crc32_combine_gen
+libz.so.1:crc32_combine_gen64
+libz.so.1:crc32_combine_op
 libz.so.1:crc32_z
 libz.so.1:crc_fold_512to32
 libz.so.1:crc_fold_copy

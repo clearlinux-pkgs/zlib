@@ -21,9 +21,9 @@ index b5e7849..4fea768 100644
 +    if (memLevel < DEF_MEM_LEVEL)
 +        memLevel = DEF_MEM_LEVEL;
 +
-     ushf *overlay;
-     /* We overlay pending_buf and d_buf+l_buf. This works since the average
-      * output size for (length,distance) codes is <= 24 bits.
+     if (version == Z_NULL || version[0] != my_version[0] ||
+         stream_size != sizeof(z_stream)) {
+         return Z_VERSION_ERROR;
 -- 
 2.35.1.windows.2
 
