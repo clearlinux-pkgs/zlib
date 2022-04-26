@@ -4,10 +4,10 @@
 #
 %define keepstatic 1
 Name     : zlib
-Version  : 1.2.12.jtk
-Release  : 74
-URL      : https://github.com/jtkukunas/zlib/archive/v1.2.12_jtk.tar.gz
-Source0  : https://github.com/jtkukunas/zlib/archive/v1.2.12_jtk.tar.gz
+Version  : 1.2.12.jtk.1
+Release  : 75
+URL      : https://github.com/jtkukunas/zlib/archive/v1.2.12_jtk.1.tar.gz
+Source0  : https://github.com/jtkukunas/zlib/archive/v1.2.12_jtk.1.tar.gz
 Summary  : zlib compression library
 Group    : Development/Tools
 License  : BSL-1.0 Zlib
@@ -24,11 +24,10 @@ BuildRequires : glibc-libc32
 Patch1: configure.patch
 Patch2: lto.patch
 Patch3: nomemlevel.patch
-Patch4: backport-fix-CC-definition.patch
 
 %description
 ZLIB DATA COMPRESSION LIBRARY
-zlib 1.2.12 is a general purpose data compression library.  All the code is
+zlib 1.2.12.1 is a general purpose data compression library.  All the code is
 thread safe.  The data format used by the zlib library is described by RFCs
 (Request for Comments) 1950 to 1952 in the files
 http://tools.ietf.org/html/rfc1950 (zlib format), rfc1951 (deflate format) and
@@ -109,17 +108,16 @@ staticdev32 components for the zlib package.
 
 
 %prep
-%setup -q -n zlib-1.2.12_jtk
-cd %{_builddir}/zlib-1.2.12_jtk
+%setup -q -n zlib-1.2.12_jtk.1
+cd %{_builddir}/zlib-1.2.12_jtk.1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
 pushd ..
-cp -a zlib-1.2.12_jtk build32
+cp -a zlib-1.2.12_jtk.1 build32
 popd
 pushd ..
-cp -a zlib-1.2.12_jtk buildavx2
+cp -a zlib-1.2.12_jtk.1 buildavx2
 popd
 
 %build
@@ -127,7 +125,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1650485828
+export SOURCE_DATE_EPOCH=1650995067
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -187,10 +185,10 @@ cd ../buildavx2;
 make %{?_smp_mflags} check || :
 
 %install
-export SOURCE_DATE_EPOCH=1650485828
+export SOURCE_DATE_EPOCH=1650995067
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/zlib
-cp %{_builddir}/zlib-1.2.12_jtk/contrib/dotzlib/LICENSE_1_0.txt %{buildroot}/usr/share/package-licenses/zlib/892b34f7865d90a6f949f50d95e49625a10bc7f0
+cp %{_builddir}/zlib-1.2.12_jtk.1/contrib/dotzlib/LICENSE_1_0.txt %{buildroot}/usr/share/package-licenses/zlib/892b34f7865d90a6f949f50d95e49625a10bc7f0
 pushd ../build32/
 %make_install32
 if [ -d  %{buildroot}/usr/lib32/pkgconfig ]
@@ -255,14 +253,14 @@ popd
 /usr/lib64/libminizip.so.1.0.0
 /usr/lib64/libz.so
 /usr/lib64/libz.so.1
-/usr/lib64/libz.so.1.2.12
+/usr/lib64/libz.so.1.2.12.1-motley
 /usr/share/clear/optimized-elf/lib*
 
 %files lib32
 %defattr(-,root,root,-)
 /usr/lib32/libz.so
 /usr/lib32/libz.so.1
-/usr/lib32/libz.so.1.2.12
+/usr/lib32/libz.so.1.2.12.1-motley
 
 %files license
 %defattr(0644,root,root,0755)
