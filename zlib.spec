@@ -5,13 +5,12 @@
 %define keepstatic 1
 Name     : zlib
 Version  : 1.2.12.jtk.1
-Release  : 75
+Release  : 76
 URL      : https://github.com/jtkukunas/zlib/archive/v1.2.12_jtk.1.tar.gz
 Source0  : https://github.com/jtkukunas/zlib/archive/v1.2.12_jtk.1.tar.gz
 Summary  : zlib compression library
 Group    : Development/Tools
 License  : BSL-1.0 Zlib
-Requires: zlib-filemap = %{version}-%{release}
 Requires: zlib-lib = %{version}-%{release}
 Requires: zlib-license = %{version}-%{release}
 BuildRequires : buildreq-cmake
@@ -54,19 +53,10 @@ Requires: zlib-dev = %{version}-%{release}
 dev32 components for the zlib package.
 
 
-%package filemap
-Summary: filemap components for the zlib package.
-Group: Default
-
-%description filemap
-filemap components for the zlib package.
-
-
 %package lib
 Summary: lib components for the zlib package.
 Group: Libraries
 Requires: zlib-license = %{version}-%{release}
-Requires: zlib-filemap = %{version}-%{release}
 
 %description lib
 lib components for the zlib package.
@@ -125,15 +115,15 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1650995067
+export SOURCE_DATE_EPOCH=1656179497
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
 export NM=gcc-nm
-export CFLAGS="$CFLAGS -O3 -Ofast -falign-functions=32 -ffat-lto-objects -flto=auto -fno-semantic-interposition -mno-vzeroupper -mprefer-vector-width=256 "
-export FCFLAGS="$FFLAGS -O3 -Ofast -falign-functions=32 -ffat-lto-objects -flto=auto -fno-semantic-interposition -mno-vzeroupper -mprefer-vector-width=256 "
-export FFLAGS="$FFLAGS -O3 -Ofast -falign-functions=32 -ffat-lto-objects -flto=auto -fno-semantic-interposition -mno-vzeroupper -mprefer-vector-width=256 "
-export CXXFLAGS="$CXXFLAGS -O3 -Ofast -falign-functions=32 -ffat-lto-objects -flto=auto -fno-semantic-interposition -mno-vzeroupper -mprefer-vector-width=256 "
+export CFLAGS="$CFLAGS -O3 -Ofast -falign-functions=32 -ffat-lto-objects -flto=auto -fno-semantic-interposition -mprefer-vector-width=256 "
+export FCFLAGS="$FFLAGS -O3 -Ofast -falign-functions=32 -ffat-lto-objects -flto=auto -fno-semantic-interposition -mprefer-vector-width=256 "
+export FFLAGS="$FFLAGS -O3 -Ofast -falign-functions=32 -ffat-lto-objects -flto=auto -fno-semantic-interposition -mprefer-vector-width=256 "
+export CXXFLAGS="$CXXFLAGS -O3 -Ofast -falign-functions=32 -ffat-lto-objects -flto=auto -fno-semantic-interposition -mprefer-vector-width=256 "
 export CFLAGS_GENERATE="$CFLAGS -fprofile-generate -fprofile-dir=/var/tmp/pgo -fprofile-update=atomic "
 export FCFLAGS_GENERATE="$FCFLAGS -fprofile-generate -fprofile-dir=/var/tmp/pgo -fprofile-update=atomic "
 export FFLAGS_GENERATE="$FFLAGS -fprofile-generate -fprofile-dir=/var/tmp/pgo -fprofile-update=atomic "
@@ -185,7 +175,7 @@ cd ../buildavx2;
 make %{?_smp_mflags} check || :
 
 %install
-export SOURCE_DATE_EPOCH=1650995067
+export SOURCE_DATE_EPOCH=1656179497
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/zlib
 cp %{_builddir}/zlib-1.2.12_jtk.1/contrib/dotzlib/LICENSE_1_0.txt %{buildroot}/usr/share/package-licenses/zlib/892b34f7865d90a6f949f50d95e49625a10bc7f0
@@ -219,7 +209,7 @@ make
 %make_install
 popd
 ## install_append end
-/usr/bin/elf-move.py avx2 %{buildroot}-v3 %{buildroot}/usr/share/clear/optimized-elf/ %{buildroot}/usr/share/clear/filemap/filemap-%{name}
+/usr/bin/elf-move.py avx2 %{buildroot}-v3 %{buildroot} %{buildroot}/usr/share/clear/filemap/filemap-%{name}
 
 %files
 %defattr(-,root,root,-)
@@ -242,19 +232,17 @@ popd
 /usr/lib32/pkgconfig/32zlib.pc
 /usr/lib32/pkgconfig/zlib.pc
 
-%files filemap
-%defattr(-,root,root,-)
-/usr/share/clear/filemap/filemap-zlib
-
 %files lib
 %defattr(-,root,root,-)
+/usr/lib64/glibc-hwcaps/x86-64-v3/libz.so
+/usr/lib64/glibc-hwcaps/x86-64-v3/libz.so.1
+/usr/lib64/glibc-hwcaps/x86-64-v3/libz.so.1.2.12.1-motley
 /usr/lib64/libminizip.so
 /usr/lib64/libminizip.so.1
 /usr/lib64/libminizip.so.1.0.0
 /usr/lib64/libz.so
 /usr/lib64/libz.so.1
 /usr/lib64/libz.so.1.2.12.1-motley
-/usr/share/clear/optimized-elf/lib*
 
 %files lib32
 %defattr(-,root,root,-)
