@@ -5,7 +5,7 @@
 %define keepstatic 1
 Name     : zlib
 Version  : 1.2.12.jtk.1
-Release  : 76
+Release  : 77
 URL      : https://github.com/jtkukunas/zlib/archive/v1.2.12_jtk.1.tar.gz
 Source0  : https://github.com/jtkukunas/zlib/archive/v1.2.12_jtk.1.tar.gz
 Summary  : zlib compression library
@@ -115,7 +115,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1656179497
+export SOURCE_DATE_EPOCH=1656342289
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -175,7 +175,7 @@ cd ../buildavx2;
 make %{?_smp_mflags} check || :
 
 %install
-export SOURCE_DATE_EPOCH=1656179497
+export SOURCE_DATE_EPOCH=1656342289
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/zlib
 cp %{_builddir}/zlib-1.2.12_jtk.1/contrib/dotzlib/LICENSE_1_0.txt %{buildroot}/usr/share/package-licenses/zlib/892b34f7865d90a6f949f50d95e49625a10bc7f0
