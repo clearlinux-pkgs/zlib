@@ -5,7 +5,7 @@
 %define keepstatic 1
 Name     : zlib
 Version  : 1.2.12.jtk.1
-Release  : 77
+Release  : 78
 URL      : https://github.com/jtkukunas/zlib/archive/v1.2.12_jtk.1.tar.gz
 Source0  : https://github.com/jtkukunas/zlib/archive/v1.2.12_jtk.1.tar.gz
 Summary  : zlib compression library
