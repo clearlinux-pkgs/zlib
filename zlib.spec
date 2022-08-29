@@ -4,10 +4,10 @@
 #
 %define keepstatic 1
 Name     : zlib
-Version  : 1.2.12.jtk.1
-Release  : 80
-URL      : https://github.com/jtkukunas/zlib/archive/v1.2.12_jtk.1.tar.gz
-Source0  : https://github.com/jtkukunas/zlib/archive/v1.2.12_jtk.1.tar.gz
+Version  : 1.2.12.jtk.2
+Release  : 81
+URL      : https://github.com/jtkukunas/zlib/archive/v1.2.12_jtk.2.tar.gz
+Source0  : https://github.com/jtkukunas/zlib/archive/v1.2.12_jtk.2.tar.gz
 Summary  : zlib compression library
 Group    : Development/Tools
 License  : BSL-1.0 Zlib
@@ -98,16 +98,16 @@ staticdev32 components for the zlib package.
 
 
 %prep
-%setup -q -n zlib-1.2.12_jtk.1
-cd %{_builddir}/zlib-1.2.12_jtk.1
+%setup -q -n zlib-1.2.12_jtk.2
+cd %{_builddir}/zlib-1.2.12_jtk.2
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
 pushd ..
-cp -a zlib-1.2.12_jtk.1 build32
+cp -a zlib-1.2.12_jtk.2 build32
 popd
 pushd ..
-cp -a zlib-1.2.12_jtk.1 buildavx2
+cp -a zlib-1.2.12_jtk.2 buildavx2
 popd
 
 %build
@@ -115,7 +115,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1656342289
+export SOURCE_DATE_EPOCH=1661788710
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -175,10 +175,10 @@ cd ../buildavx2;
 make %{?_smp_mflags} check || :
 
 %install
-export SOURCE_DATE_EPOCH=1656342289
+export SOURCE_DATE_EPOCH=1661788710
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/zlib
-cp %{_builddir}/zlib-1.2.12_jtk.1/contrib/dotzlib/LICENSE_1_0.txt %{buildroot}/usr/share/package-licenses/zlib/892b34f7865d90a6f949f50d95e49625a10bc7f0
+cp %{_builddir}/zlib-1.2.12_jtk.2/contrib/dotzlib/LICENSE_1_0.txt %{buildroot}/usr/share/package-licenses/zlib/892b34f7865d90a6f949f50d95e49625a10bc7f0
 pushd ../build32/
 %make_install32
 if [ -d  %{buildroot}/usr/lib32/pkgconfig ]
@@ -256,6 +256,7 @@ popd
 
 %files staticdev
 %defattr(-,root,root,-)
+/usr/lib64/glibc-hwcaps/x86-64-v3/libz.a
 /usr/lib64/libminizip.a
 /usr/lib64/libz.a
 
