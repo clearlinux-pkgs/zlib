@@ -5,7 +5,7 @@
 %define keepstatic 1
 Name     : zlib
 Version  : 1.2.12.jtk.2
-Release  : 81
+Release  : 82
 URL      : https://github.com/jtkukunas/zlib/archive/v1.2.12_jtk.2.tar.gz
 Source0  : https://github.com/jtkukunas/zlib/archive/v1.2.12_jtk.2.tar.gz
 Summary  : zlib compression library
@@ -115,7 +115,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1661788710
+export SOURCE_DATE_EPOCH=1662579516
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -175,10 +175,10 @@ cd ../buildavx2;
 make %{?_smp_mflags} check || :
 
 %install
-export SOURCE_DATE_EPOCH=1661788710
+export SOURCE_DATE_EPOCH=1662579516
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/zlib
-cp %{_builddir}/zlib-1.2.12_jtk.2/contrib/dotzlib/LICENSE_1_0.txt %{buildroot}/usr/share/package-licenses/zlib/892b34f7865d90a6f949f50d95e49625a10bc7f0
+cp %{_builddir}/zlib-1.2.12_jtk.2/contrib/dotzlib/LICENSE_1_0.txt %{buildroot}/usr/share/package-licenses/zlib/892b34f7865d90a6f949f50d95e49625a10bc7f0 || :
 pushd ../build32/
 %make_install32
 if [ -d  %{buildroot}/usr/lib32/pkgconfig ]
@@ -198,9 +198,6 @@ pushd ../buildavx2/
 %make_install_v3
 popd
 %make_install
-## Remove excluded files
-rm -f %{buildroot}*/usr/lib64/haswell/libz.a
-rm -f %{buildroot}*/usr/lib64/haswell/pkgconfig/zlib.pc
 ## install_append content
 pushd contrib/minizip
 autoreconf -f -i
