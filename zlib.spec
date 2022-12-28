@@ -4,10 +4,10 @@
 #
 %define keepstatic 1
 Name     : zlib
-Version  : 1.2.12.jtk.2
-Release  : 83
-URL      : https://github.com/jtkukunas/zlib/archive/v1.2.12_jtk.2.tar.gz
-Source0  : https://github.com/jtkukunas/zlib/archive/v1.2.12_jtk.2.tar.gz
+Version  : 1.2.13
+Release  : 84
+URL      : https://github.com/jtkukunas/zlib/archive/v1.2.13/zlib-1.2.13.tar.gz
+Source0  : https://github.com/jtkukunas/zlib/archive/v1.2.13/zlib-1.2.13.tar.gz
 Summary  : zlib compression library
 Group    : Development/Tools
 License  : BSL-1.0 Zlib
@@ -26,7 +26,7 @@ Patch3: nomemlevel.patch
 
 %description
 ZLIB DATA COMPRESSION LIBRARY
-zlib 1.2.12.1 is a general purpose data compression library.  All the code is
+zlib 1.2.13 is a general purpose data compression library.  All the code is
 thread safe.  The data format used by the zlib library is described by RFCs
 (Request for Comments) 1950 to 1952 in the files
 http://tools.ietf.org/html/rfc1950 (zlib format), rfc1951 (deflate format) and
@@ -98,16 +98,16 @@ staticdev32 components for the zlib package.
 
 
 %prep
-%setup -q -n zlib-1.2.12_jtk.2
-cd %{_builddir}/zlib-1.2.12_jtk.2
+%setup -q -n zlib-1.2.13
+cd %{_builddir}/zlib-1.2.13
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
 pushd ..
-cp -a zlib-1.2.12_jtk.2 build32
+cp -a zlib-1.2.13 build32
 popd
 pushd ..
-cp -a zlib-1.2.12_jtk.2 buildavx2
+cp -a zlib-1.2.13 buildavx2
 popd
 
 %build
@@ -115,15 +115,15 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1662579516
+export SOURCE_DATE_EPOCH=1672205396
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
 export NM=gcc-nm
-export CFLAGS="$CFLAGS -O3 -Ofast -falign-functions=32 -ffat-lto-objects -flto=auto -fno-semantic-interposition -mprefer-vector-width=256 "
-export FCFLAGS="$FFLAGS -O3 -Ofast -falign-functions=32 -ffat-lto-objects -flto=auto -fno-semantic-interposition -mprefer-vector-width=256 "
-export FFLAGS="$FFLAGS -O3 -Ofast -falign-functions=32 -ffat-lto-objects -flto=auto -fno-semantic-interposition -mprefer-vector-width=256 "
-export CXXFLAGS="$CXXFLAGS -O3 -Ofast -falign-functions=32 -ffat-lto-objects -flto=auto -fno-semantic-interposition -mprefer-vector-width=256 "
+export CFLAGS="$CFLAGS -O3 -Ofast -falign-functions=32 -ffat-lto-objects -flto=auto -fno-semantic-interposition -mprefer-vector-width=512 "
+export FCFLAGS="$FFLAGS -O3 -Ofast -falign-functions=32 -ffat-lto-objects -flto=auto -fno-semantic-interposition -mprefer-vector-width=512 "
+export FFLAGS="$FFLAGS -O3 -Ofast -falign-functions=32 -ffat-lto-objects -flto=auto -fno-semantic-interposition -mprefer-vector-width=512 "
+export CXXFLAGS="$CXXFLAGS -O3 -Ofast -falign-functions=32 -ffat-lto-objects -flto=auto -fno-semantic-interposition -mprefer-vector-width=512 "
 export CFLAGS_GENERATE="$CFLAGS -fprofile-generate -fprofile-dir=/var/tmp/pgo -fprofile-update=atomic "
 export FCFLAGS_GENERATE="$FCFLAGS -fprofile-generate -fprofile-dir=/var/tmp/pgo -fprofile-update=atomic "
 export FFLAGS_GENERATE="$FFLAGS -fprofile-generate -fprofile-dir=/var/tmp/pgo -fprofile-update=atomic "
@@ -175,10 +175,10 @@ cd ../buildavx2;
 make %{?_smp_mflags} check || :
 
 %install
-export SOURCE_DATE_EPOCH=1662579516
+export SOURCE_DATE_EPOCH=1672205396
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/zlib
-cp %{_builddir}/zlib-1.2.12_jtk.2/contrib/dotzlib/LICENSE_1_0.txt %{buildroot}/usr/share/package-licenses/zlib/892b34f7865d90a6f949f50d95e49625a10bc7f0 || :
+cp %{_builddir}/zlib-%{version}/contrib/dotzlib/LICENSE_1_0.txt %{buildroot}/usr/share/package-licenses/zlib/892b34f7865d90a6f949f50d95e49625a10bc7f0
 pushd ../build32/
 %make_install32
 if [ -d  %{buildroot}/usr/lib32/pkgconfig ]
@@ -233,19 +233,19 @@ popd
 %defattr(-,root,root,-)
 /usr/lib64/glibc-hwcaps/x86-64-v3/libz.so
 /usr/lib64/glibc-hwcaps/x86-64-v3/libz.so.1
-/usr/lib64/glibc-hwcaps/x86-64-v3/libz.so.1.2.12.1-motley
+/usr/lib64/glibc-hwcaps/x86-64-v3/libz.so.1.2.13
 /usr/lib64/libminizip.so
 /usr/lib64/libminizip.so.1
 /usr/lib64/libminizip.so.1.0.0
 /usr/lib64/libz.so
 /usr/lib64/libz.so.1
-/usr/lib64/libz.so.1.2.12.1-motley
+/usr/lib64/libz.so.1.2.13
 
 %files lib32
 %defattr(-,root,root,-)
 /usr/lib32/libz.so
 /usr/lib32/libz.so.1
-/usr/lib32/libz.so.1.2.12.1-motley
+/usr/lib32/libz.so.1.2.13
 
 %files license
 %defattr(0644,root,root,0755)

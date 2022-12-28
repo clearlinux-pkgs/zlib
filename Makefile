@@ -1,5 +1,5 @@
 PKG_NAME := zlib
-URL = https://github.com/jtkukunas/zlib/archive/v1.2.12_jtk.2.tar.gz
+URL = https://github.com/jtkukunas/zlib/archive/v1.2.13/zlib-1.2.13.tar.gz
 ARCHIVES = 
 
 include ../common/Makefile.common
