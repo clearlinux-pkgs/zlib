@@ -1,3 +1,4 @@
 configure.patch
 lto.patch
 nomemlevel.patch
+backport-CVE-2023-45853.patch
