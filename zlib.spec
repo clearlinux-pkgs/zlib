@@ -8,7 +8,7 @@
 %define keepstatic 1
 Name     : zlib
 Version  : 1.2.13
-Release  : 93
+Release  : 94
 URL      : https://github.com/jtkukunas/zlib/archive/v1.2.13/zlib-1.2.13.tar.gz
 Source0  : https://github.com/jtkukunas/zlib/archive/v1.2.13/zlib-1.2.13.tar.gz
 Summary  : zlib compression library
