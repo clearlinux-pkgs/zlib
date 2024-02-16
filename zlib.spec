@@ -8,7 +8,7 @@
 %define keepstatic 1
 Name     : zlib
 Version  : 1.2.13
-Release  : 97
+Release  : 98
 URL      : https://github.com/jtkukunas/zlib/archive/v1.2.13/zlib-1.2.13.tar.gz
 Source0  : https://github.com/jtkukunas/zlib/archive/v1.2.13/zlib-1.2.13.tar.gz
 Summary  : zlib compression library
@@ -116,6 +116,9 @@ popd
 pushd ..
 cp -a zlib-1.2.13 buildavx2
 popd
+pushd ..
+cp -a zlib-1.2.13 buildapx
+popd
 
 %build
 ## build_prepend content
@@ -125,7 +128,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1708122330
+export SOURCE_DATE_EPOCH=1708122453
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -190,6 +193,21 @@ LDFLAGS="$CLEAR_INTERMEDIATE_LDFLAGS -march=x86-64-v3 "
 %configure  --static --shared
 make  %{?_smp_mflags}
 popd
+unset PKG_CONFIG_PATH
+pushd ../buildapx/
+## build_prepend content
+export CFLAGS="$CFLAGS  -DUNALIGNED_OK -D_REENTRANT -D_LARGEFILE64_SOURCE=1 "
+## build_prepend end
+GOAMD64=v3
+CC="gcc-14"
+CFLAGS="$CLEAR_INTERMEDIATE_CFLAGS -march=x86-64-v3 -mapxf -mavx10.1 -Wl,-z,x86-64-v3 "
+CXXFLAGS="$CLEAR_INTERMEDIATE_CXXFLAGS -march=x86-64-v3 -Wl,-z,x86-64-v3 "
+FFLAGS="$CLEAR_INTERMEDIATE_FFLAGS -march=x86-64-v3 -mapxf -mavx10.1 -Wl,-z,x86-64-v3 "
+FCFLAGS="$CLEAR_INTERMEDIATE_FCFLAGS -march=x86-64-v3 -mapxf -mavx10.1 "
+LDFLAGS="$CLEAR_INTERMEDIATE_LDFLAGS -march=x86-64-v3 "
+%configure --host=x86_64-clr-linux-gnu  --static --shared
+make  %{?_smp_mflags}
+popd
 %check
 export LANG=C.UTF-8
 export http_proxy=http://127.0.0.1:9/
@@ -226,7 +244,7 @@ FFLAGS="$CLEAR_INTERMEDIATE_FFLAGS"
 FCFLAGS="$CLEAR_INTERMEDIATE_FCFLAGS"
 ASFLAGS="$CLEAR_INTERMEDIATE_ASFLAGS"
 LDFLAGS="$CLEAR_INTERMEDIATE_LDFLAGS"
-export SOURCE_DATE_EPOCH=1708122330
+export SOURCE_DATE_EPOCH=1708122453
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/zlib
 cp %{_builddir}/zlib-%{version}/LICENSE %{buildroot}/usr/share/package-licenses/zlib/233f44af3fb55dcc7fddfef8e77ac627b0008756 || :
@@ -251,6 +269,10 @@ GOAMD64=v3
 pushd ../buildavx2/
 %make_install_v3
 popd
+GOAMD64=v3
+pushd ../buildapx/
+%make_install_va
+popd
 GOAMD64=v2
 %make_install
 ## install_append content
@@ -262,6 +284,7 @@ make
 popd
 ## install_append end
 /usr/bin/elf-move.py avx2 %{buildroot}-v3 %{buildroot} %{buildroot}/usr/share/clear/filemap/filemap-%{name}
+/usr/bin/elf-move.py apx %{buildroot}-va %{buildroot} %{buildroot}/usr/share/clear/filemap/filemap-%{name}
 
 %files
 %defattr(-,root,root,-)
@@ -287,6 +310,7 @@ popd
 %files lib
 %defattr(-,root,root,-)
 /V3/usr/lib64/libz.so.1.2.13
+/VA/usr/lib64/libz.so.1.2.13
 /usr/lib64/libminizip.so
 /usr/lib64/libminizip.so.1
 /usr/lib64/libminizip.so.1.0.0
