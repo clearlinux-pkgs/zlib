@@ -1,6 +1,0 @@
-pushd contrib/minizip
-autoreconf -f -i
-%configure
-make
-%make_install
-popd
